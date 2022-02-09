@@ -227,7 +227,20 @@
             </div>
             <div class="row justify-content-center">
                <div class="col-md-6">
-                  <form>
+                  <div
+                     class="alert alert-warning alert-dismissible fade show d-none my-alert"
+                     role="alert"
+                  >
+                     <strong>Terimakasih!</strong> Pesan anda sudah kami terima.
+                     <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                     ></button>
+                  </div>
+
+                  <form name="prp-contact-form">
                      <div class="mb-3">
                         <label for="name" class="form-label"
                            >Nama Lengkap</label
@@ -237,6 +250,7 @@
                            class="form-control"
                            id="name"
                            aria-describedby="name"
+                           name="nama"
                         />
                      </div>
                      <div class="mb-3">
@@ -246,6 +260,7 @@
                            class="form-control"
                            id="email"
                            aria-describedby="email"
+                           name="email"
                         />
                      </div>
                      <div class="mb-3">
@@ -254,11 +269,25 @@
                            class="form-control"
                            id="pesan"
                            rows="3"
+                           name="pesan"
                         ></textarea>
                      </div>
 
-                     <button type="submit" class="btn btn-primary">
+                     <button type="submit" class="btn btn-primary btn-kirim">
                         Kirim
+                     </button>
+
+                     <button
+                        class="btn btn-primary btn-loading d-none"
+                        type="button"
+                        disabled
+                     >
+                        <span
+                           class="spinner-border spinner-border-sm"
+                           role="status"
+                           aria-hidden="true"
+                        ></span>
+                        Loading...
                      </button>
                   </form>
                </div>
@@ -289,5 +318,35 @@
          integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
          crossorigin="anonymous"
       ></script>
+
+      <script>
+         const scriptURL =
+            "https://script.google.com/macros/s/AKfycbxA0AYXm4n3R9HQtYFJD5NrZAvVath2-pGS_w31vxlCZ8WcYdtViK4BNy-u1kk9kz43Eg/exec";
+         const form = document.forms["prp-contact-form"];
+         const btnKirim = document.querySelector(".btn-kirim");
+         const btnLoading = document.querySelector(".btn-loading");
+         const myAlert = document.querySelector(".my-alert");
+
+         // ketika tombol submit di klik
+         form.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            // tampilkan tombol loading, hilangkan tombol kirim
+            btnLoading.classList.toggle("d-none");
+            btnKirim.classList.toggle("d-none");
+            fetch(scriptURL, { method: "POST", body: new FormData(form) })
+               .then((response) => {
+                  // tampilkan tombol kirim, hilangkan tombol loading
+                  btnLoading.classList.toggle("d-none");
+                  btnKirim.classList.toggle("d-none");
+                  // tampilkan alert
+                  myAlert.classList.toggle("d-none");
+                  // reset form
+                  form.reset();
+                  console.log("Success!", response);
+               })
+               .catch((error) => console.error("Error!", error.message));
+         });
+      </script>
    </body>
 </html>
